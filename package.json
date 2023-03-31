@@ -8,7 +8,7 @@
     "test": "mocha tests/*.spec.js --color",
     "dev": "nodemon src/index.js",
     
-    "lint": "eslint src/* --color --fix"
+    "lint": "eslint src/* --color"
   },
   "repository": {
     "type": "git",
