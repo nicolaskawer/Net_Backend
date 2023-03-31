@@ -6,7 +6,7 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
 jobs: 
-  my-job:
+  cicd-job:
     executor:
       name: node/default
     steps:
@@ -18,10 +18,11 @@ jobs:
           name: run test
           command: npm run test
       - run:
-          name: run linter
+          name: Run linter
           command: npm run lint      
     
 workflows:
   example-workflow: 
-    jobs:
-      - my-job
+    jobs: 
+      - cicd-job
+    
