@@ -18,12 +18,12 @@
         "vue"
     ],
     "rules": {
-        "indent": ["error", 2],
-        "eol-last":["off"],
-        "linebreak-style": ["error", "windows"],
+        "indent": ["error", 4],
+        "linebreak-style": ["error", "windows"]
+        /*"eol-last":["off"],
         "prefer-destructuring":["off"],
         "no-var" : ["off"],
-        "no-console" : ["off"]
+        "no-console" : ["off"]*/
          
 
           
