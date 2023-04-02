@@ -5,8 +5,9 @@
         "jest": true 
     },
     "extends": [
-        "plugin:vue/vue3-essential",
+        "plugin:",
         "airbnb-base"
+        
     ],
     "overrides": [
     ],
@@ -20,13 +21,9 @@
     "rules": {
         "indent": ["error", 4],
         "linebreak-style": ["error", "unix"]
-        /*"eol-last":["off"],
-
-        "prefer-destructuring":["off"],
-        "no-var" : ["off"],
-        "no-console" : ["off"]*/
+      
          
 
-          
-    }
+    }       
+   
 }
