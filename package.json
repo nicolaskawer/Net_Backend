@@ -2,7 +2,7 @@
   
   "name": "sprint_1",
   "version": "1.0.0",
-  "description": "sprint1",
+  "description": "Backend_side",
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/*.spec.js --color",
