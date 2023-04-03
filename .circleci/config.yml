@@ -5,7 +5,7 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
   node: circleci/node@4.7
-jobs: 
+jobs:
   cicd-job:
     executor:
       name: node/default
@@ -19,10 +19,12 @@ jobs:
           command: npm run test
       - run:
           name: Run linter
-          command: npm run lint      
-    
+          command: npm run lint
+      - run:
+          name: CD - deploy the service
+          command: curl https://api.render.com/deploy/srv-cgl8tdu4dad69r6hqev0?key=QmMalLX2dW0
+
 workflows:
-  example-workflow: 
-    jobs: 
+  example-workflow:
+    jobs:
       - cicd-job
-    
