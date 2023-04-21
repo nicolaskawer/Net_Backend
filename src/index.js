@@ -1,12 +1,14 @@
 const express = require('express');
+const cors = require('cors');
 
-const port = process.env.PORT || 4000;
 const app = express();
-app.get('/', (req, res) => {
-    res.send('<h2>Hi from server main page<h2> ');
-    return res;
+app.use(cors());
+app.use(express.json());
+
+app.get('/message', (req, res) => {
+    res.json({ message: 'Hello from server!' });
 });
-app.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log('server is up and running on port:', port);
+
+app.listen(8000, () => {
+    console.log('Server is running on port 8000.');
 });
