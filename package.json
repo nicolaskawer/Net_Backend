@@ -1,6 +1,5 @@
 {
-  
-  "name": "net_backend",
+  "name": "net__backend",
   "version": "1.0.0",
   "description": "Backend_side",
   "main": "index.js",
