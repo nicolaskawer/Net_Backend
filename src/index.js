@@ -7,13 +7,14 @@ app.use(cors());
 app.use(express.json());
 
 const jwt = require("jsonwebtoken");
+
 const jwtSecret = "hjgfdghsjkahugwthdsvhxbjnwhigjyq4782769()gsygwsijjj";
 const url = "mongodb+srv://hlev2454:mongodatabase77@barknetcluster.ksy8pmw.mongodb.net/User?retryWrites=true&w=majority";
 
 mongoose
     .connect(url, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
     })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.log(err));
@@ -34,9 +35,9 @@ app.post("/", async (req, res) => {
         await User.create({
             firstName, lastName, username, email, password, birthdate,
         });
-        res.json({ status: "OK" });
+        return res.json({ status: "OK" });
     } catch (err) {
-        res.json({ status: "error" });
+        return res.json({ status: "error" });
     }
 });
 app.post("/Login", async (req, res) => {
@@ -53,7 +54,7 @@ app.post("/Login", async (req, res) => {
 
         return res.json({ error: "error" });
     }
-    res.json({ status: "error", error: "Invalid pass" });
+    return res.json({ status: "error", error: "Invalid pass" });
 });
 
 app.listen(8000, () => {
