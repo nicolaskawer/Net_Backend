@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,7 +24,7 @@ require("./userDetails");
 const User = mongoose.model("Users");
 app.post("/", async (req, res) => {
     const {
-        firstName, lastName, username, email, password, birthdate
+        firstName, lastName, username, email, password, birthdate,
     } = req.body;
     console.log(req.body);
     try {
@@ -33,7 +34,7 @@ app.post("/", async (req, res) => {
             return res.json({ error: "User Exsits" });
         }
         await User.create({
-            firstName, lastName, username, email, password, birthdate
+            firstName, lastName, username, email, password, birthdate,
         });
         console.log("create");
         return res.json({ status: "OK" });
