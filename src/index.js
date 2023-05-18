@@ -1,36 +1,60 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient } = require("mongodb");
-
-const url = "mongodb+srv://hlev2454:mongodatabase77@barknetcluster.ksy8pmw.mongodb.net/?retryWrites=true&w=majority";
-const dbName = "your-database-name"; // we need to do universal function to get the db name to connect to
+const mongoose = require("mongoose");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/message", (req, res) => {
-    res.json({ message: "Hello from server!!" });
-});
-app.get("/data", (req, res) => {
-    MongoClient.connect(url, (connectionError, client) => {
-        if (connectionError) {
-            console.log(connectionError);
-            res.status(500).send("Failed to connect to the database");
-        } else {
-            const db = client.db(dbName);
-            const collection = db.collection("your-collection-name");
-            collection.find({}).toArray((queryError, result) => {
-                if (queryError) {
-                    console.log(queryError);
-                    res.status(500).send("Failed to retrieve data from the database");
-                } else {
-                    res.json(result);
-                }
-                client.close();
-            });
+const jwt = require("jsonwebtoken");
+
+const jwtSecret = "hjgfdghsjkahugwthdsvhxbjnwhigjyq4782769()gsygwsijjj";
+const url = "mongodb+srv://hlev2454:mongodatabase77@barknetcluster.ksy8pmw.mongodb.net/User?retryWrites=true&w=majority";
+
+mongoose
+    .connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((err) => console.log(err));
+
+require("./userDetails");
+
+const User = mongoose.model("User");
+app.post("/", async (req, res) => {
+    const {
+        firstName, lastName, username, email, password, birthdate,
+    } = req.body;
+
+    try {
+        const oldUser = await User.findOne({ username });
+        if (oldUser) {
+            return res.json({ error: "User Exsits" });
         }
-    });
+        await User.create({
+            firstName, lastName, username, email, password, birthdate,
+        });
+        return res.json({ status: "OK" });
+    } catch (err) {
+        return res.json({ status: "error" });
+    }
+});
+app.post("/Login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.json({ error: "User not found" });
+    }
+    if (user.password === password) {
+        const token = jwt.sign({}, jwtSecret);
+        if (res.status(201)) {
+            return res.json({ status: "OK", data: token });
+        }
+
+        return res.json({ error: "error" });
+    }
+    return res.json({ status: "error", error: "Invalid pass" });
 });
 
 app.listen(8000, () => {
