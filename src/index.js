@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -9,7 +8,7 @@ app.use(express.json());
 const jwt = require("jsonwebtoken");
 
 const jwtSecret = "hjgfdghsjkahugwthdsvhxbjnwhigjyq4782769()gsygwsijjj";
-const url = "mongodb+srv://hlev2454:mongodatabase77@barknetcluster.ksy8pmw.mongodb.net/User?retryWrites=true&w=majority";
+const url = "mongodb+srv://hlev2454:passwordmongo@barknetcluster.ksy8pmw.mongodb.net/AuthDB?retryWrites=true&w=majority";
 
 mongoose
     .connect(url, {
@@ -17,26 +16,29 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => console.log("Connected to MongoDB"))
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err, "Unable to connect to MongoDB Atlas!"));
 
 require("./userDetails");
 
-const User = mongoose.model("User");
+const User = mongoose.model("Users");
 app.post("/", async (req, res) => {
     const {
-        firstName, lastName, username, email, password, birthdate,
+        firstName, lastName, username, email, password, birthdate
     } = req.body;
-
+    console.log(req.body);
     try {
         const oldUser = await User.findOne({ username });
         if (oldUser) {
+            console.log("exist");
             return res.json({ error: "User Exsits" });
         }
         await User.create({
-            firstName, lastName, username, email, password, birthdate,
+            firstName, lastName, username, email, password, birthdate
         });
+        console.log("create");
         return res.json({ status: "OK" });
     } catch (err) {
+        console.log("error");
         return res.json({ status: "error" });
     }
 });
