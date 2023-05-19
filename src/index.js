@@ -21,7 +21,7 @@ mongoose
 
 require("./userDetails");
 
-const User = mongoose.model("Users");
+const User = mongoose.model("users");
 app.post("/", async (req, res) => {
     const {
         firstName, lastName, username, email, password, birthdate,
@@ -33,9 +33,9 @@ app.post("/", async (req, res) => {
             console.log("exist");
             return res.json({ error: "User Exsits" });
         }
-        await User.create({
-            firstName, lastName, username, email, password, birthdate,
-        });
+        await User.create([{
+            firstName, lastName, username, email, password, birthdate
+        }]);
         console.log("create");
         return res.json({ status: "OK" });
     } catch (err) {
