@@ -34,7 +34,7 @@ app.post("/", async (req, res) => {
             return res.json({ error: "User Exsits" });
         }
         await User.create([{
-            firstName, lastName, username, email, password, birthdate
+            firstName, lastName, username, email, password, birthdate,
         }]);
         console.log("create");
         return res.json({ status: "OK" });
