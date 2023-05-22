@@ -64,24 +64,26 @@ app.post("/Login", async (req, res) => {
 const Post = require("./postDetails");
 
 const createPost = async (req, res) => {
-  const { postID, username, picture, caption, hashtag, likesCount } = req.body;
+    const {
+        postID, username, picture, caption, hashtag, likesCount,
+    } = req.body;
 
-  try {
+    try {
     // Create a new post
-    const newPost = await Post.create({
-      postID,
-      username,
-      picture,
-      caption,
-      hashtag,
-      likesCount,
-    });
-    console.log("createPost")
-    return res.json({ status: "OK", data: newPost });
-  } catch (error) {
-    console.error("Error creating post:", error);
-    return res.status(500).json({ error: "Failed to create post" });
-  }
+        const newPost = await Post.create({
+            postID,
+            username,
+            picture,
+            caption,
+            hashtag,
+            likesCount,
+        });
+        console.log("createPost");
+        return res.json({ status: "OK", data: newPost });
+    } catch (error) {
+        console.error("Error creating post:", error);
+        return res.status(500).json({ error: "Failed to create post" });
+    }
 };
 
 module.exports = createPost;
