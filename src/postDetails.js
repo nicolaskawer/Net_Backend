@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     picture: {
-        type: Binary,
+        type: Buffer,
         required: true,
     },
     caption: {

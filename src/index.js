@@ -39,7 +39,7 @@ app.post("/", async (req, res) => {
         console.log("create");
         return res.json({ status: "OK" });
     } catch (err) {
-        console.log("error");
+        console.log("error1");
         return res.json({ status: "error" });
     }
 });
@@ -60,6 +60,31 @@ app.post("/Login", async (req, res) => {
 
     return res.json({ status: "error", error: "Invalid pass" });
 });
+
+const Post = require("./postDetails");
+
+const createPost = async (req, res) => {
+  const { postID, username, picture, caption, hashtag, likesCount } = req.body;
+
+  try {
+    // Create a new post
+    const newPost = await Post.create({
+      postID,
+      username,
+      picture,
+      caption,
+      hashtag,
+      likesCount,
+    });
+    console.log("createPost")
+    return res.json({ status: "OK", data: newPost });
+  } catch (error) {
+    console.error("Error creating post:", error);
+    return res.status(500).json({ error: "Failed to create post" });
+  }
+};
+
+module.exports = createPost;
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000.");
