@@ -125,14 +125,16 @@ require("./postDetails");
 const newPost = mongoose.model("posts");
 app.post("/New_Post", upload.single("picture"), async (req, res) => {
     const {
-        postID, username, picture, caption, hashtag, likesCount,
+        username, picture, caption, hashtag, likesCount,
     } = req.body;
     console.log(req.body);
+    const highestPost = await newPost.findOne().sort({ postID: -1 }).limit(1);
+    const nextPostId = highestPost ? highestPost.postID + 1 : 1;
     try {
         // create a new post
         await newPost.create([
             {
-                postID,
+                postID: nextPostId,
                 username,
                 picture,
                 caption,
