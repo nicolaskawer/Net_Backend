@@ -22,6 +22,7 @@ mongoose
 require("./userDetails");
 
 const User = mongoose.model("users");
+
 app.post("/", async (req, res) => {
     const {
         firstName, lastName, username, email, password, birthdate,
@@ -43,22 +44,64 @@ app.post("/", async (req, res) => {
         return res.json({ status: "error" });
     }
 });
-app.post("/Login", async (req, res) => {
+app.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
+
     if (!user) {
         return res.json({ error: "User not found" });
     }
+
     if (user.password === password) {
         const token = jwt.sign({}, jwtSecret);
-        if (res.status(201)) {
-            return res.json({ status: "OK", data: token });
-        }
-
-        return res.json({ error: "error" });
+        return res.json({ status: "OK", data: token });
     }
 
-    return res.json({ status: "error", error: "Invalid pass" });
+    return res.json({ status: "error", error: "Invalid password" });
+});
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (token == null) {
+        return res.sendStatus(401);
+    }
+
+    return jwt.verify(token, jwtSecret, (err, user) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+        req.user = user;
+        next();
+    });
+};
+
+app.get("/home", authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    try {
+        const user = await User.findById(userId);
+        if (user) {
+            // Handle user data
+            return res.json({ user });
+        }
+        return res.json({ error: "User not found" });
+    } catch (err) {
+        console.log("An error occurred:", err);
+        return res.json({ error: "Error retrieving user data" });
+    }
+});
+app.get("/search", authenticateToken, async (req, res) => {
+    const { query } = req.query;
+
+    try {
+        const users = await User.find({
+            username: { $regex: query, $options: "i" },
+        });
+        return res.json({ users });
+    } catch (err) {
+        console.log("An error occurred:", err);
+        return res.json({ error: "Error retrieving user list" });
+    }
 });
 
 const Post = require("./postDetails");
@@ -69,7 +112,7 @@ const createPost = async (req, res) => {
     } = req.body;
 
     try {
-    // Create a new post
+        // Create a new post
         const newPost = await Post.create({
             postID,
             username,
