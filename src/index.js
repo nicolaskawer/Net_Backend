@@ -2,11 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const app = express();
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+const bodyParser = require("body-parser");
 
-const app = express();
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cors());
 app.use(express.json());
 
@@ -121,12 +124,11 @@ require("./postDetails");
 const newPost = mongoose.model("posts");
 app.post("/New_Post", upload.single("picture"), async (req, res) => {
     const {
-        postID, username, caption, hashtag, likesCount,
+        postID, username, picture, caption, hashtag, likesCount
     } = req.body;
-    const { picture } = req.file.buffer;
-
+    console.log(req.body);
     try {
-    // create a new post
+        // create a new post
         await newPost.create([
             {
                 postID,
