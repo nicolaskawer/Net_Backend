@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const multer = require("multer");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const app = express();
 app.use(cors());
@@ -34,9 +38,16 @@ app.post("/", async (req, res) => {
             console.log("exist");
             return res.json({ error: "User Exsits" });
         }
-        await User.create([{
-            firstName, lastName, username, email, password, birthdate,
-        }]);
+        await User.create([
+            {
+                firstName,
+                lastName,
+                username,
+                email,
+                password,
+                birthdate,
+            },
+        ]);
         console.log("create");
         return res.json({ status: "OK" });
     } catch (err) {
@@ -104,32 +115,35 @@ app.post("/search", async (req, res) => {
         return res.json({ error: "Error retrieving user list" });
     }
 });
-const Post = require("./postDetails");
 
-const createPost = async (req, res) => {
+require("./postDetails");
+
+const newPost = mongoose.model("posts");
+app.post("/New_Post", upload.single("picture"), async (req, res) => {
     const {
-        postID, username, picture, caption, hashtag, likesCount,
+        postID, username, caption, hashtag, likesCount,
     } = req.body;
+    const { picture } = req.file.buffer;
 
     try {
-        // Create a new post
-        const newPost = await Post.create({
-            postID,
-            username,
-            picture,
-            caption,
-            hashtag,
-            likesCount,
-        });
-        console.log("createPost");
-        return res.json({ status: "OK", data: newPost });
+    // create a new post
+        await newPost.create([
+            {
+                postID,
+                username,
+                picture,
+                caption,
+                hashtag,
+                likesCount,
+            },
+        ]);
+        console.log("create_post");
+        return res.json({ status: "OK", data: "create_post" });
     } catch (error) {
         console.error("Error creating post:", error);
         return res.status(500).json({ error: "Failed to create post" });
     }
-};
-
-module.exports = createPost;
+});
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000.");
