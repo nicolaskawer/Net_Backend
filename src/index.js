@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const multer = require("multer");
+
 const app = express();
 
 const storage = multer.memoryStorage();
@@ -124,7 +125,7 @@ require("./postDetails");
 const newPost = mongoose.model("posts");
 app.post("/New_Post", upload.single("picture"), async (req, res) => {
     const {
-        postID, username, picture, caption, hashtag, likesCount
+        postID, username, picture, caption, hashtag, likesCount,
     } = req.body;
     console.log(req.body);
     try {
