@@ -90,20 +90,20 @@ app.get("/home", authenticateToken, async (req, res) => {
         return res.json({ error: "Error retrieving user data" });
     }
 });
-app.get("/search", authenticateToken, async (req, res) => {
-    const { query } = req.query;
-
+app.post("/search", async (req, res) => {
+    const { query } = req.body;
+    console.log(req.body);
     try {
         const users = await User.find({
             username: { $regex: query, $options: "i" },
         });
+        console.log(users);
         return res.json({ users });
     } catch (err) {
         console.log("An error occurred:", err);
         return res.json({ error: "Error retrieving user list" });
     }
 });
-
 const Post = require("./postDetails");
 
 const createPost = async (req, res) => {
