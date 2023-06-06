@@ -289,6 +289,7 @@ app.get("/others", async (req, res) => {
 });
 
 require("./postDetails");
+
 app.get("/traveling", async (req, res) => {
     try {
         const postsD = await displayPost.find({ hashtag: "Traveling" });
@@ -300,30 +301,30 @@ app.get("/traveling", async (req, res) => {
 });
 
 app.post("/notification", async (req, res) => {
-  const { username } = req.body;
+    const { username } = req.body;
 
-  try {
+    try {
     // Retrieve postIDs corresponding to the username
-    const posts = await displayPost.find({ username }, "postID");
-    console.log("find posts:", posts);
+        const posts = await displayPost.find({ username }, "postID");
+        console.log("find posts:", posts);
 
-    // Extract postIDs from the posts array
-    const postIDs = posts.map((post) => post.postID);
-    console.log("map posts:", postIDs);
+        // Extract postIDs from the posts array
+        const postIDs = posts.map((post) => post.postID);
+        console.log("map posts:", postIDs);
 
-    // Retrieve likedBy fields for the postIDs
-    const likes = await LikesDetails.find({ postID: { $in: postIDs } }, "likedBy");
-    console.log("users:", likes);
+        // Retrieve likedBy fields for the postIDs
+        const likes = await LikesDetails.find({ postID: { $in: postIDs } }, "likedBy");
+        console.log("users:", likes);
 
-    // Extract likedBy values from the likes array
-    const likedByValues = likes.map((like) => like.likedBy);
-    console.log("map users:", likedByValues);
+        // Extract likedBy values from the likes array
+        const likedByValues = likes.map((like) => like.likedBy);
+        console.log("map users:", likedByValues);
 
-    res.json(likedByValues);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
-  }
+        res.json(likedByValues);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
+    }
 });
 
 app.listen(8000, () => {
