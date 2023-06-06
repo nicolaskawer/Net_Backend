@@ -289,7 +289,6 @@ app.get("/others", async (req, res) => {
 });
 
 require("./postDetails");
-
 app.get("/traveling", async (req, res) => {
     try {
         const postsD = await displayPost.find({ hashtag: "Traveling" });
@@ -298,6 +297,33 @@ app.get("/traveling", async (req, res) => {
         console.error("error retrieving posts: ", error);
         res.status(500).json({ error: "error retrieving posts" });
     }
+});
+
+app.post("/notification", async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    // Retrieve postIDs corresponding to the username
+    const posts = await displayPost.find({ username }, "postID");
+    console.log("find posts:", posts);
+
+    // Extract postIDs from the posts array
+    const postIDs = posts.map((post) => post.postID);
+    console.log("map posts:", postIDs);
+
+    // Retrieve likedBy fields for the postIDs
+    const likes = await LikesDetails.find({ postID: { $in: postIDs } }, "likedBy");
+    console.log("users:", likes);
+
+    // Extract likedBy values from the likes array
+    const likedByValues = likes.map((like) => like.likedBy);
+    console.log("map users:", likedByValues);
+
+    res.json(likedByValues);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
+  }
 });
 
 app.listen(8000, () => {
