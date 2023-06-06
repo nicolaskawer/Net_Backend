@@ -150,13 +150,149 @@ app.post("/New_Post", upload.single("picture"), async (req, res) => {
     }
 });
 
+require("./likesDetails");
+
+const LikesDetails = mongoose.model("likes");
+app.post("/updateLikeCount", async (req, res) => {
+    const { postID, likesCount, useRname } = req.body;
+    console.log("start", likesCount);
+
+    let temp = likesCount;
+    console.log("start temp", temp);
+    try {
+        const likedPost = await LikesDetails.findOne({
+            postID,
+            likedBy: useRname,
+        });
+
+        if (likedPost) {
+            temp = likesCount - 1;
+            await newPost.findOneAndUpdate({ postID }, { likesCount: temp });
+            await LikesDetails.deleteOne({ postID, likedBy: useRname });
+            console.log("User has already liked the post", temp);
+            return res.json({
+                status: "OK",
+                data: temp,
+            });
+        }
+        temp = likesCount + 1;
+        await newPost.findOneAndUpdate({ postID }, { likesCount: temp });
+
+        const newLike = new LikesDetails({
+            postID,
+            likedBy: useRname,
+        });
+        await newLike.save();
+        console.log("added like", temp);
+        return res.json({ status: "OK", data: temp });
+    } catch (error) {
+        console.error("Error updating like count:", error);
+        return res.status(500).json({ error: "Failed to update like count" });
+    }
+});
+
 require("./postDetails");
 
 const displayPost = mongoose.model("posts");
-app.post = ("/Explore",
-async (req, res) => {
+app.get("/Explore", async (req, res) => {
     try {
         const postsD = await displayPost.find();
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/adoption", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Adoption" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/fashion", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Fashion" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/food", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Food" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/funny", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Funny" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/grooming", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Grooming" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/health", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Health" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/others", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Others" });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
+
+require("./postDetails");
+
+app.get("/traveling", async (req, res) => {
+    try {
+        const postsD = await displayPost.find({ hashtag: "Traveling" });
         res.json(postsD);
     } catch (error) {
         console.error("error retrieving posts: ", error);
