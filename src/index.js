@@ -91,13 +91,13 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-app.get("/home", authenticateToken, async (req, res) => {
-    const userId = req.user.id;
+app.post("/personal_area", async (req, res) => {
+    const visited = req.body.visited;
     try {
-        const user = await User.findById(userId);
+        const user = await User.findOne({ username: visited });
         if (user) {
-            // Handle user data
-            return res.json({ user });
+            const { username, firstName, lastName, email, birthdate } = user;
+            return res.json({ username, firstName, lastName, email, birthdate });
         }
         return res.json({ error: "User not found" });
     } catch (err) {
@@ -105,6 +105,27 @@ app.get("/home", authenticateToken, async (req, res) => {
         return res.json({ error: "Error retrieving user data" });
     }
 });
+app.post("/update_user", (req, res) => {
+    const visited = req.body.visited;
+    const { firstName, lastName, email, birthdate } = req.body;
+
+    // Update the user details in the database based on the "visited" parameter
+
+    // Assuming you have a database and a User model/schema
+    User.findOneAndUpdate(
+        { username: visited },
+        { firstName, lastName, email, birthdate },
+        { new: true }
+    )
+        .then((updatedUser) => {
+            res.json(updatedUser); // Return the updated user details as the response
+        })
+        .catch((error) => {
+            res.status(500).json({ error: "Failed to update user details" });
+        });
+});
+
+
 app.post("/search", async (req, res) => {
     const { query } = req.body;
     console.log(req.body);
@@ -304,7 +325,7 @@ app.post("/notification", async (req, res) => {
     const { username } = req.body;
 
     try {
-    // Retrieve postIDs corresponding to the username
+        // Retrieve postIDs corresponding to the username
         const posts = await displayPost.find({ username }, "postID");
         console.log("find posts:", posts);
 
@@ -326,6 +347,7 @@ app.post("/notification", async (req, res) => {
         res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
     }
 });
+
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000.");
