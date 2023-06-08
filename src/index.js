@@ -74,7 +74,7 @@ app.post("/login", async (req, res) => {
 
     return res.json({ status: "error", error: "Invalid password" });
 });
-const authenticateToken = (req, res, next) => {
+/* const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -90,14 +90,18 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
-
+*/
 app.post("/personal_area", async (req, res) => {
-    const visited = req.body.visited;
+    const { visited } = req.body;
     try {
         const user = await User.findOne({ username: visited });
         if (user) {
-            const { username, firstName, lastName, email, birthdate } = user;
-            return res.json({ username, firstName, lastName, email, birthdate });
+            const {
+                username, firstName, lastName, email, birthdate,
+            } = user;
+            return res.json({
+                username, firstName, lastName, email, birthdate,
+            });
         }
         return res.json({ error: "User not found" });
     } catch (err) {
@@ -106,25 +110,28 @@ app.post("/personal_area", async (req, res) => {
     }
 });
 app.post("/update_user", (req, res) => {
-    const visited = req.body.visited;
-    const { firstName, lastName, email, birthdate } = req.body;
+    const { visited } = req.body;
+    const {
+        firstName, lastName, email, birthdate,
+    } = req.body;
 
     // Update the user details in the database based on the "visited" parameter
 
     // Assuming you have a database and a User model/schema
     User.findOneAndUpdate(
         { username: visited },
-        { firstName, lastName, email, birthdate },
-        { new: true }
+        {
+            firstName, lastName, email, birthdate,
+        },
+        { new: true },
     )
         .then((updatedUser) => {
             res.json(updatedUser); // Return the updated user details as the response
         })
-        .catch((error) => {
+        .catch(() => {
             res.status(500).json({ error: "Failed to update user details" });
         });
 });
-
 
 app.post("/search", async (req, res) => {
     const { query } = req.body;
@@ -347,7 +354,6 @@ app.post("/notification", async (req, res) => {
         res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
     }
 });
-
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000.");
