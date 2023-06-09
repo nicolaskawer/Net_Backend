@@ -166,7 +166,6 @@ app.post("/check_following", async (req, res) => {
     const { visited, current } = req.body;
     try {
         const follower = await Follower.findOne({ me: visited, followME: current });
-        console.log(!!follower);
         res.status(200).json({ isFollowing: !!follower });
     } catch (error) {
         res.status(500).json({ error: "Failed to check following status." });
@@ -178,7 +177,6 @@ app.post("/get_followers", async (req, res) => {
     const current = req.body.visited;
     try {
         const followers = await Follower.find({ me: current });
-        console.log(followers);
         res.json({ followers });
     } catch (error) {
         res.status(500).json({ error: "Failed to get followers." });
@@ -190,7 +188,6 @@ app.post("/get_following", async (req, res) => {
     const current = req.body.visited;
     try {
         const following = await Follower.find({ followME: current });
-        console.log(following);
         res.json({ following });
     } catch (error) {
         res.status(500).json({ error: "Failed to get following." });
@@ -298,14 +295,16 @@ app.get("/Explore", async (req, res) => {
 
 require("./postDetails");
 
-app.get("/my_posts", async (req, res) => {
+app.post("/my_posts", async (req, res) => {
+    console.log("success");
     const { visited } = req.body;
     try {
-        const postsD = await displayPost.find({ username: visited });
-        res.json(postsD);
+        const posts = await displayPost.find({ username: visited });
+        res.json(posts);
+        console.log(posts);
     } catch (error) {
-        console.error("error retrieving posts: ", error);
-        res.status(500).json({ error: "error retrieving posts" });
+        console.log("An error occurred:", error);
+        res.status(500).json({ error: "Error retrieving posts" });
     }
 });
 
