@@ -28,8 +28,10 @@ mongoose
     .catch((err) => console.log(err, "Unable to connect to MongoDB Atlas!"));
 
 require("./userDetails");
+require("./followersDetails");
 
 const User = mongoose.model("users");
+const Follower = mongoose.model("followers");
 
 app.post("/", async (req, res) => {
     const {
@@ -132,6 +134,68 @@ app.post("/update_user", (req, res) => {
             res.status(500).json({ error: "Failed to update user details" });
         });
 });
+app.post("/follow", async (req, res) => {
+    const { visited, current } = req.body;
+    console.log(req.body);
+    try {
+        const follower = new Follower({
+            me: visited,
+            followME: current,
+        });
+        console.log("success");
+        await follower.save();
+        res.json({ message: "User followed successfully." });
+    } catch (error) {
+        res.json({ error: "Failed to follow user." });
+    }
+});
+
+// Unfollow a user
+app.post("/unfollow", async (req, res) => {
+    const { visited, current } = req.body;
+    try {
+        await Follower.deleteOne({ me: visited, followME: current });
+        res.json({ message: "User unfollowed successfully." });
+    } catch (error) {
+        res.json({ error: "Failed to unfollow user." });
+    }
+});
+
+// Check if the user is being followed
+app.post("/check_following", async (req, res) => {
+    const { visited, current } = req.body;
+    try {
+        const follower = await Follower.findOne({ me: visited, followME: current });
+        console.log(!!follower);
+        res.status(200).json({ isFollowing: !!follower });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to check following status." });
+    }
+});
+
+// Get followers for a user
+app.post("/get_followers", async (req, res) => {
+    const current = req.body.visited;
+    try {
+        const followers = await Follower.find({ me: current });
+        console.log(followers);
+        res.json({ followers });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get followers." });
+    }
+});
+
+// Get following for a user
+app.post("/get_following", async (req, res) => {
+    const current = req.body.visited;
+    try {
+        const following = await Follower.find({ followME: current });
+        console.log(following);
+        res.json({ following });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get following." });
+    }
+});
 
 app.post("/search", async (req, res) => {
     const { query } = req.body;
@@ -233,6 +297,17 @@ app.get("/Explore", async (req, res) => {
 });
 
 require("./postDetails");
+
+app.get("/my_posts", async (req, res) => {
+    const { visited } = req.body;
+    try {
+        const postsD = await displayPost.find({ username: visited });
+        res.json(postsD);
+    } catch (error) {
+        console.error("error retrieving posts: ", error);
+        res.status(500).json({ error: "error retrieving posts" });
+    }
+});
 
 app.get("/adoption", async (req, res) => {
     try {
