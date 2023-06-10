@@ -408,25 +408,44 @@ app.post("/notification", async (req, res) => {
     try {
         // Retrieve postIDs corresponding to the username
         const posts = await displayPost.find({ username }, "postID");
-        console.log("find posts:", posts);
 
         // Extract postIDs from the posts array
         const postIDs = posts.map((post) => post.postID);
-        console.log("map posts:", postIDs);
 
         // Retrieve likedBy fields for the postIDs
         const likes = await LikesDetails.find({ postID: { $in: postIDs } }, "likedBy");
-        console.log("users:", likes);
 
         // Extract likedBy values from the likes array
         const likedByValues = likes.map((like) => like.likedBy);
-        console.log("map users:", likedByValues);
 
         res.json(likedByValues);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
     }
+});
+
+require("./followersDetails");
+
+const followersData = mongoose.model("followers");
+app.post("/postsByUsername", async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    // Retrieve the followers' "me" values that match the given username in the "followMe" field
+    const followers = await followersData.find({ followME: username }, { me: 1 });
+
+    // Extract the "me" values from the retrieved followers
+    const meValues = followers.map((follower) => follower.me);
+
+    // Find the posts that have usernames matching the "me" values
+    const posts = await displayPost.find({ username: { $in: meValues } });
+
+    res.json(posts);
+  } catch (error) {
+    console.error("Error retrieving posts:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.listen(8000, () => {
