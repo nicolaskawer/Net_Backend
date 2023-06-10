@@ -429,23 +429,23 @@ require("./followersDetails");
 
 const followersData = mongoose.model("followers");
 app.post("/postsByUsername", async (req, res) => {
-  const { username } = req.body;
+    const { username } = req.body;
 
-  try {
+    try {
     // Retrieve the followers' "me" values that match the given username in the "followMe" field
-    const followers = await followersData.find({ followME: username }, { me: 1 });
+        const followers = await followersData.find({ followME: username }, { me: 1 });
 
-    // Extract the "me" values from the retrieved followers
-    const meValues = followers.map((follower) => follower.me);
+        // Extract the "me" values from the retrieved followers
+        const meValues = followers.map((follower) => follower.me);
 
-    // Find the posts that have usernames matching the "me" values
-    const posts = await displayPost.find({ username: { $in: meValues } });
+        // Find the posts that have usernames matching the "me" values
+        const posts = await displayPost.find({ username: { $in: meValues } });
 
-    res.json(posts);
-  } catch (error) {
-    console.error("Error retrieving posts:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+        res.json(posts);
+    } catch (error) {
+        console.error("Error retrieving posts:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 app.listen(8000, () => {
