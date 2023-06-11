@@ -1,12 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const multer = require("multer");
+// const multer = require("multer");
 
 const app = express();
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage });
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.json({ limit: "10mb" }));
