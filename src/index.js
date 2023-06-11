@@ -212,7 +212,7 @@ app.post("/search", async (req, res) => {
 require("./postDetails");
 
 const newPost = mongoose.model("posts");
-app.post("/New_Post", upload.single("picture"), async (req, res) => {
+app.post("/New_Post", async (req, res) => {
     const {
         username, picture, caption, hashtag, likesCount,
     } = req.body;
@@ -432,7 +432,7 @@ app.post("/postsByUsername", async (req, res) => {
     const { username } = req.body;
 
     try {
-    // Retrieve the followers' "me" values that match the given username in the "followMe" field
+        // Retrieve the followers' "me" values that match the given username in the "followMe" field
         const followers = await followersData.find({ followME: username }, { me: 1 });
 
         // Extract the "me" values from the retrieved followers
