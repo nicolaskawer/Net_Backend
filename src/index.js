@@ -424,7 +424,6 @@ app.post("/notification", async (req, res) => {
         res.status(500).json({ error: "An error occurred while retrieving likedBy values." });
     }
 });
-  
 
 require("./followersDetails");
 
@@ -451,27 +450,27 @@ app.post("/postsByUsername", async (req, res) => {
 
 app.post("/deleteAccount", async (req, res) => {
     const { username } = req.body;
-  
+
     try {
-      // Delete user
-      await User.findOneAndRemove({ username });
-  
-      // Delete user's posts
-      await displayPost.deleteMany({ username });
-  
-      // Delete user's likes
-      await LikesDetails.deleteMany({ likedBy: username });
-  
-      // Delete user's followers and followings
-      await followersData.deleteMany({ $or: [{ me: username }, { followME: username }] });
-  
-      console.log(`Account for ${username} deleted successfully.`);
-      res.status(200).json({ message: "Account deleted successfully." });
+        // Delete user
+        await User.findOneAndRemove({ username });
+
+        // Delete user's posts
+        await displayPost.deleteMany({ username });
+
+        // Delete user's likes
+        await LikesDetails.deleteMany({ likedBy: username });
+
+        // Delete user's followers and followings
+        await followersData.deleteMany({ $or: [{ me: username }, { followME: username }] });
+
+        console.log(`Account for ${username} deleted successfully.`);
+        res.status(200).json({ message: "Account deleted successfully." });
     } catch (error) {
-      console.error("Error deleting account:", error);
-      res.status(500).json({ error: "Error deleting account." });
+        console.error("Error deleting account:", error);
+        res.status(500).json({ error: "Error deleting account." });
     }
-  });
+});
 
 app.listen(8000, () => {
     console.log("Server is running on port 8000.");
